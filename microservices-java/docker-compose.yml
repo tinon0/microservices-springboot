@@ -1,0 +1,73 @@
+
+services:
+
+  # API Gateway
+  api-gateway:
+  # TODO
+  # Completar microservicio
+  # puerto 8080
+    ports:
+      - 8080:8080
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+
+  # Clientes Service
+  clientes-service:
+  # TODO
+  # Completar microservicio
+  # puerto 8081
+    ports:
+      - 8081:8081
+
+    build:
+      context: clientes
+      dockerfile: Dockerfile
+
+    container_name: clientes-service
+
+  # Biblioteca Service
+  biblioteca-service:
+  # TODO
+  # Completar microservicio
+  # puerto 8082
+    ports:
+      - 8082:8082
+    build:
+      context: biblioteca
+      dockerfile: Dockerfile
+
+
+    depends_on:
+      - mysql-db
+
+  # Servicio de base de datos MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: biblioteca_db-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: biblioteca_db
+      MYSQL_USER: tup
+      MYSQL_PASSWORD: tup
+    ports:
+      - "3307:3306"
+    expose:
+      - "3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+# Volumen persistente para la base de datos
+volumes:
+  mysql-data:
+
+networks:
+  library-network:
+    driver: bridge
